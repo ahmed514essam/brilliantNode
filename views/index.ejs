@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!--=============== FAVICON ===============-->
+        <link rel="shortcut icon" href="/img/favicon.png" type="image/x-icon">
+
+        <!--=============== BOXICONS ===============-->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+
+        <!--=============== SWIPER CSS ===============--> 
+        <link rel="stylesheet" href="./css/swiper-bundle.min.css">
+        
+
+        <!--=============== CSS ===============--> 
+        <link rel="stylesheet" href="./css/styles.css">
+
+        <title>Brilliant</title>
+    </head>
+    <body>
+        <!--==================== HEADER ====================-->
+        <header class="header" id="header">
+            <nav class="nav container">
+                <a href="#" class="nav__logo">
+                    <img src="/img/favicon.png" alt="" class="nav__logo-img">
+
+                    Brilliant
+                </a>
+
+                <div class="nav__menu" id="nav-menu">
+                    <ul class="nav__list">
+                        <li class="nav__item">
+                            <a href="#home" class="nav__link active-link">Home</a>
+                        </li>
+
+                        <li class="nav__item">
+                            <a href="#about" class="nav__link">About</a>
+                        </li>
+
+                        <li class="nav__item">
+                            <a href="#trick" class="nav__link">Wax</a>
+                        </li>
+
+                        <li class="nav__item">
+                            <a href="#new" class="nav__link">Foam</a>
+                        </li>
+                    </ul>
+
+                    <div class="nav__close" id="nav-close">
+                        <i class='bx bx-x'></i>
+                    </div>
+
+
+                    <img src="./img/nav-img.png" alt="" class="nav__img">
+                </div>
+                 <div class="nav__btns">
+                    <div class="nav__shop" id="cart-shop">
+                        <i class='bx bx-shopping-bag' ></i>
+                    </div>
+
+                <div class="nav__toggle" id="nav-toggle">
+                    <i class='bx bx-grid-alt'></i>
+                </div>
+                </div>
+               
+            </nav>
+            </nav>
+        </header>
+
+         <!--==================== CART ====================-->
+         <!--==============================================================================
+         ===============================================================================
+         ====================================================================================
+         ===================================================================================
+         ==================================================================================
+         ====================================================================================-->
+      <div class="cart" id="cart">
+    <i class='bx bx-x cart__close' id="cart-close"></i>
+
+    <h2 class="cart__title-center">cart</h2>
+
+    <!-- هنا هنعرض المنتجات ديناميكياً -->
+    <div class="cart__container"></div>
+
+    <div class="cart__checkout">
+        <h3 class="cart__total">total prices: <span id="cart-total">0 LE</span></h3>
+        <a href="form.html" class="cart__btn">Booking confirmation</a>   
+    </div>
+</div>
+
+           
+
+        <main class="main">
+            <!--==================== HOME ====================-->
+            <section class="home container" id="home">
+                <div class="swiper home-swiper">
+                    <div class="swiper-wrapper">
+
+<% if(sec) { %>
+  <% sec.forEach(section => { %>
+
+
+
+                        <!-- HOME SLIDER 1 -->
+                        <section class="swiper-slide">
+                            <div class="home__content grid">
+                                <div class="home__group">
+
+  <% if(section.imagePublicId){ %>
+        <img src="<%= section.imageUrl %>" alt="" class="home_img">
+      <% } %>
+                                    <div class="home__indicator"></div>
+    
+                                    <div class="home__details-img">
+                                        <h4 class="home__details-title">brilliant</h4>
+                                        <span class="home__details-subtitle">FOAM CLEANER</span>
+                                    </div>
+                                </div>
+    
+                                <div class="home__data">
+                                    <h3 class="home__subtitle"><%= section.smallTitle %></h3>
+                                    <h1 class="home__title"> <%= section.bigTitle %></h1>
+                                    <p class="home__description">
+                                        <%= section.description %>
+                                    </p>
+
+                                    <div class="home__buttons">
+                                        <a href="#" class="button">Buy Now</a>
+                                        <a href="#" class="button--link button--flex">Package contents <i class='bx bx-right-arrow-alt button__icon'></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                       
+              
+                    
+                          <% }) %>
+
+<% } %>
+                        
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </section>
+
+            <!--==================== DISCOUNT ====================-->
+            <section class="section discount">
+                <div class="discount__container container grid">
+                    <div class="discount__data">
+                        <h2 class="discount__title " style="width: 350px;"><%= sell.selltitle %></h2>
+                        <a href="#" class="button">Go to new</a>
+                    </div>
+
+                    <img src="<%= sell.imageUrlsell %>" alt="" class="discount__img" style="width: 170px; height: 170px;">
+                </div>
+            </section>
+
+            <!--==================== ABOUT FOAM ====================-->
+            <section class="section about" id="about">
+                <div class="about__container container grid">
+                    <div class="about__data">
+                        <h2 class="section__title about__title">About  <br> Foam</h2>
+                        <p class="about__description">
+                            <%= about.aboutfoam %>
+                        </p>
+                        <a href="#" class="button">Know more</a>
+                    </div>
+
+                    <img src="<%= about.imageUrlfoam %>" alt="" class="about__img">
+                </div>
+            </section>   
+            <!--==================== Proudcts foam ====================-->
+            <section class="section new" id="new">
+                <h2 class="section__title">Product - Foam</h2>
+
+                <div class="new__container container">
+
+                    <div class="swiper new-swiper">
+    
+                        <div class="swiper-wrapper ">
+<% arr.filter(n => n.category === "foam").forEach(item => { %>
+
+
+                            <div class="new__content swiper-slide text-danger" style="height: 340px;">
+                                <div class="new__tag">SELL <%= item.discount %>% </div>
+<% if (item.image && item.image.length > 0) { %>
+      <img src="<%= item.image[0].url %>" alt="product image" class="new__img " style="width: 125px; height: 125px;" >
+  <% } else { %>
+      <p>No Image</p>
+  <% } %>
+
+                                <h3 class="new__title"><%= item.name %></h3>
+                                <span class="new__subtitle"><%= item.description %></span>
+                                
+                               <div class="new__prices">
+                                    <span class="new__price "><%= item.priceAfterDiscount %> LE</span>
+                                    <span class="new__discount"><%=  item.price %> LE</span>
+                                </div>
+
+                                <button class="add-to-cart-btn button new__button" 
+                                 data-id="<%= item._id %>"
+ data-name="<%= item.name %>"
+ data-price="<%= item.priceAfterDiscount %>"
+         data-image="<%= item.image[0] ? item.image[0].url : '/img/home1-img.png' %>" >
+
+                                    <i class='bx bx-cart-alt new__icon'></i>
+                                </button>
+                            </div>
+                            <% });  %>
+
+
+                         
+                        
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="section new" id="new">
+
+            <!--==================== ABOUT Wax ====================-->
+            <section class="section about" id="about">
+                <div class="about__container container grid">
+                    <div class="about__data">
+                        <h2 class="section__title about__title">About  <br> wax</h2>
+                        <p class="about__description">
+                            <%= about.aboutwax %>
+                        </p>
+                        <a href="#" class="button">Know more</a>
+                    </div>
+
+                    <img src="<%= about.imageUrlwax %>" alt="" class="about__img">
+                </div>
+            </section>       
+            
+            
+                <!--==================== Proudcts Waxes ====================-->
+                <h2 class="section__title">Wax</h2>
+
+                <div class="new__container container">
+                    <div class="swiper new-swiper">
+                        <div class="swiper-wrapper">
+                            
+        
+                  <% arr.filter(n => n.category === "wax").forEach(item => { %>
+
+
+                            <div class="new__content swiper-slide text-danger " style="height: 340px;">
+                                <div class="new__tag">SELL <%= item.discount %>% </div>
+<% if (item.image && item.image.length > 0) { %>
+      <img src="<%= item.image[0].url %>" alt="product image" class="new__img " style="width: 125px; height: 125px;" >
+  <% } else { %>
+      <p>No Image</p>
+  <% } %>
+
+                                <h3 class="new__title"><%= item.name %></h3>
+                                <span class="new__subtitle"><%= item.description %></span>
+                                
+                               <div class="new__prices">
+                                    <span class="new__price"><%= item.priceAfterDiscount %> LE</span>
+                                    <span class="new__discount"><%=  item.price %> LE</span>
+                                </div>
+
+                                <button class="add-to-cart-btn button new__button"
+                                    data-id="<%= item._id %>"
+ data-name="<%= item.name %>"
+ data-price="<%= item.priceAfterDiscount %>"
+ data-image="<%= item.image[0] ? item.image[0].url : '/img/home1-img.png' %>"
+
+ >
+                                    <i class='bx bx-cart-alt new__icon'></i>
+                                </button>
+                            </div>
+                            <% });  %>
+
+        
+                            
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!--==================== OUR NEWSLETTER ====================-->
+            <section class="section newsletter">
+                <div class="newsletter__container container">
+                    <h2 class="section__title">Our Newsletter</h2>
+                    <p class="newsletter__description">
+                        Promotion new products and sales. Directly to your inbox
+                    </p>
+
+                    <form action="" class="newsletter__form">
+                        <input type="text" placeholder="Enter your email" class="newsletter__input">
+                        <button class="button">
+                            Subscribe
+                        </button>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <!--==================== FOOTER ====================-->
+            <footer class="footer section">
+                <div class="footer__container container grid">
+                    <div class="footer__content">
+                        <a href="#" class="footer__logo">
+                            <img src="./img/home2-img.png" alt="" class="footer__logo-img">
+                            Brilliant
+                        </a>
+
+                        <p class="footer__description">info __________ <br> of your life.</p>
+                        
+                        <div class="footer__social">
+                            <a href="https://www.facebook.com/" target="_blank" class="footer__social-link">
+                                <i class='bx bxl-facebook'></i>
+                            </a>
+                            <a href="https://www.instagram.com/" target="_blank" class="footer__social-link">
+                                <i class='bx bxl-instagram-alt' ></i>
+                            </a>
+                            <a href="https://twitter.com/" target="_blank" class="footer__social-link">
+                                <i class='bx bxl-twitter' ></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="footer__content">
+                        <h3 class="footer__title">About</h3>
+                        
+                        <ul class="footer__links">
+                            <li>
+                                <a href="#" class="footer__link">About Us</a>
+                            </li>
+                            <li>
+                                <a href="#" class="footer__link">Features</a>
+                            </li>
+                            <li>
+                                <a href="#" class="footer__link">News</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="footer__content">
+                        <h3 class="footer__title">Our Services</h3>
+                        
+                        <ul class="footer__links">
+                            <li>
+                                <a href="#" class="footer__link">Pricing</a>
+                            </li>
+                            <li>
+                                <a href="#" class="footer__link">Discounts</a>
+                            </li>
+                            <li>
+                                <a href="./admin.html" class="footer__link">Admin Controll</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="footer__content">
+                        <h3 class="footer__title">Our Company</h3>
+                        
+                        <ul class="footer__links">
+                            <li>
+                                <a href="#" class="footer__link">Blog</a>
+                            </li>
+                            <li>
+                                <a href="#" class="footer__link">About us</a>
+                            </li>
+                            <li>
+                                <a href="#" class="footer__link">Our mision</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <span class="footer__copy">&#169; Brilliant. All rigths reserved</span>
+
+                <img src="./img/home2-img.png" alt="" class="footer__img-one">
+                <img src="./img/home2-img.png" alt="" class="footer__img-two">
+            </footer>
+
+            <!--=============== SCROLL UP ===============-->
+            <a href="#" class="scrollup" id="scroll-up">
+                <i class='bx bx-up-arrow-alt scrollup__icon'></i>
+            </a>
+        
+        <!--=============== SCROLL REVEAL ===============-->
+        <script src="./js/scrollreveal.min.js"></script>
+
+        <!--=============== SWIPER JS ===============-->
+        <script src="./js/swiper-bundle.min.js"></script>
+        
+        <!--=============== MAIN JS ===============-->
+        <script src="./js/start.js"></script>
+        <!--=====Script========-->
+ <script>
+    // إضافة منتج للسلة
+document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
+  btn.onclick = async () => {
+    const id = btn.dataset.id;
+    const name = btn.dataset.name;
+    const price = Number(btn.dataset.price); // تحويل للسعر رقم
+    const image = btn.dataset.image;
+
+    const res = await fetch("/cart/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, name, price, image })
+    });
+
+    const data = await res.json();
+    document.querySelector(".cart__container").innerHTML = data.html;
+document.getElementById("cart-total").innerText = data.total + " LE";
+  };
+});
+
+// زيادة/نقصان الكمية وحذف منتج
+document.addEventListener("click", e => {
+  const plusBtn = e.target.closest(".plus");
+  const minusBtn = e.target.closest(".minus");
+  const deleteBtn = e.target.closest(".delete");
+
+  if (plusBtn) updateCart("/cart/plus", plusBtn.dataset.id);
+  if (minusBtn) updateCart("/cart/minus", minusBtn.dataset.id);
+  if (deleteBtn) updateCart("/cart/delete", deleteBtn.dataset.id);
+});
+
+async function updateCart(url, id) {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id })
+  });
+
+  const data = await res.json();
+  document.querySelector(".cart__container").innerHTML = data.html;
+document.getElementById("cart-total").innerText = data.total + " LE";
+}
+
+ </script>
+
+
+
+    </body>
+</html>

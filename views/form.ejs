@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+          <link rel="shortcut icon" href="/img/favicon.png" type="image/x-icon">
+
+  <title>Payment Form</title>
+  <style>
+    /* ---------- Reset & base (preserve your original design) ---------- */
+    :root{
+      --bg:#f6f7f9;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --accent:#0b0b0b;
+      --success:#16a34a;
+      --danger:#ef4444;
+      --radius:12px;
+      font-family: "Cairo", "Noto Kufi Arabic", system-ui, sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      background: linear-gradient(180deg, #f7f8fa 0%, #f3f4f6 100%);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
+      color:var(--accent);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      transition: direction 0.18s, text-align 0.18s;
+    }
+
+    /* floating language toggle (circular, subtle) */
+    .lang-toggle {
+      position: fixed;
+      top: 18px;
+      right: 18px; /* will flip to left in RTL via JS */
+      z-index: 9999;
+      width:44px;
+      height:44px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 6px 18px rgba(11,11,11,0.06);
+      cursor: pointer;
+      font-size:22px;
+    }
+
+    /* ---------- Wrapper ---------- */
+    .checkout {
+      width:100%;
+      max-width:980px;
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:24px;
+      align-items:start;
+    }
+    @media (max-width:900px){
+      .checkout{grid-template-columns:1fr; padding-bottom:40px}
+    }
+
+    /* ---------- Left: form ---------- */
+    .panel {
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow: 0 6px 18px rgba(11,11,11,0.06);
+    }
+    .panel h2{font-size:20px;margin-bottom:12px}
+    .muted{color:var(--muted);font-size:14px}
+
+    .field{
+      margin-top:12px;
+    }
+    label{
+      display:block;
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:8px;
+    }
+    input[type="text"], input[type="tel"], select, textarea {
+      width:100%;
+      padding:12px 14px;
+      border-radius:10px;
+      border:1px solid #e6e7ea;
+      font-size:15px;
+      background:transparent;
+      font-family: inherit;
+    }
+    .inline{
+      display:flex;
+      gap:12px;
+    }
+    .inline .field{flex:1}
+
+    /* Payment method tabs */
+    .methods{
+      display:flex;
+      gap:10px;
+      margin-top:8px;
+      flex-wrap:wrap;
+    }
+    .method {
+      flex:0 0 auto;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #e6e7ea;
+      background:#fff;
+      cursor:pointer;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      transition:0.12s;
+      font-size:14px;
+    }
+    .method.selected{
+      border-color:#111;
+      box-shadow: 0 6px 18px rgba(11,11,11,0.06);
+    }
+    .method img{width:34px;height:auto;display:block}
+
+    /* Card fields box */
+    .card-box{
+      margin-top:12px;
+      padding:14px;
+      border-radius:10px;
+      border:1px dashed #e9e9ee;
+      background:linear-gradient(180deg,#ffffff, #fbfbfc);
+    }
+    .card-visual{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:10px;
+    }
+    .card-visual .chip{
+      width:44px;height:30px;background:linear-gradient(90deg,#e0e0e0,#bdbdbd);border-radius:4px;
+    }
+    .card-visual .brand{font-weight:700;color:var(--muted);}
+
+    .helper{
+      margin-top:8px;color:var(--muted);font-size:13px;
+    }
+
+    /* Errors & success */
+    .error{color:var(--danger);font-size:13px;margin-top:8px}
+    .success{color:var(--success);font-size:13px;margin-top:8px}
+
+    /* Right: summary */
+    .summary {
+      background:linear-gradient(180deg,#fff,#fcfcfd);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow: 0 6px 18px rgba(11,11,11,0.04);
+      height:max-content;
+    }
+    .summary h3{font-size:16px;margin-bottom:8px}
+    .product{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-top:10px;
+    }
+    .product img{width:84px;height:84px;object-fit:cover;border-radius:8px}
+    .product .meta{font-size:14px}
+    .price{
+      margin-top:12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-weight:700;
+      font-size:18px;
+    }
+    .checkout-btn{
+      margin-top:16px;
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      border:none;
+      background:#000;
+      color:#fff;
+      font-size:16px;
+      cursor:pointer;
+    }
+
+.checkout-btn {
+    background: linear-gradient(135deg, #28a745, #218838);
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    color: #fff;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.checkout-btn:hover {
+    background: linear-gradient(135deg, #218838, #28a745);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.checkout-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+
+    .small{font-size:13px;color:var(--muted)}
+
+    /* tiny responsive tweaks */
+    @media (max-width:520px){
+      .method img{width:28px}
+      .product img{width:64px;height:64px}
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating language toggle (flag-only circular button) -->
+  <div class="lang-toggle" id="langToggle" title="Change language">🇬🇧</div>
+
+  <div class="checkout" role="main">
+    <!-- LEFT: form -->
+    <section class="panel" aria-labelledby="pay-title">
+      <h2 id="pay-title">نموذج الدفع</h2>
+      <p id="pay-desc" class="muted">اختر وسيلة الدفع وأكمل بيانات الشراء.</p>
+
+      <!-- Customer info -->
+       <form action="/form.html" method="post">
+      <div class="field">
+        <label id="lbl-fullname" for="fullname">الاسم الكامل</label>
+        <input class="fw-bold text-bold" name="fullname" id="fullname" type="text" placeholder="اسمك كما في البطاقة أو العنوان" required />
+      </div>
+
+      <div class="inline">
+        <div class="field">
+          <label id="lbl-phone" for="phone" >رقم الموبايل</label>
+          <input id="phone" type="tel" name="phone" placeholder="+20xxxxxxxx" required />
+        </div>
+        
+        <div class="field">
+          <label id="lbl-governorate" for="governorate" >المحافظة</label>
+          <select id="governorate" name="governorate" required >
+            <!-- options will be rendered dynamically per language -->
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label id="lbl-address" for="address">العنوان التفصيلي</label>
+        <input id="address" type="text" name="address" placeholder="شارع - عمارة - رقم - حي" required />
+      </div>
+
+
+<div class="field text-center">
+  <button type="submit" class="btn btn-success checkout-btn p-3 fw-bold">
+    <i class="fa fa-credit-card me-2"></i> Checkout
+  </button>
+</div>
+
+
+       </form>
+      <!-- Payment methods -->
+      <div class="field" style="margin-top:18px">
+        <label id="lbl-paymethod">طريقة الدفع</label>
+        <div class="methods" role="tablist" aria-label="طرق الدفع" id="methods"></div>
+      </div>
+
+      <!-- Dynamic payment area -->
+      <div id="payment-area" class="card-box" aria-live="polite">
+        <!-- Card form -->
+        <div id="card-form">
+          <div class="card-visual">
+            <div>
+              <div id="card-details-title" style="font-size:13px;color:var(--muted)">تفاصيل البطاقة</div>
+              <div id="card-helper" class="helper">نقبل Visa و MasterCard</div>
+            </div>
+            <div style="text-align:left" class="brand" id="card-brand">بطاقة</div>
+          </div>
+
+          <div class="field">
+            <label id="lbl-card-number" for="card-number">رقم البطاقة</label>
+            <input id="card-number" type="text" inputmode="numeric" placeholder="xxxx xxxx xxxx xxxx" maxlength="19" />
+            <div id="card-number-error" class="error" style="display:none"></div>
+          </div>
+
+          <div class="inline" style="margin-top:10px">
+            <div class="field">
+              <label id="lbl-expiry" for="expiry">تاريخ الانتهاء (MM/YY)</label>
+              <input id="expiry" type="text" inputmode="numeric" placeholder="MM/YY" maxlength="5" />
+            </div>
+            <div class="field">
+              <label id="lbl-cvv" for="cvv">CVV</label>
+              <input id="cvv" type="text" inputmode="numeric" placeholder="123" maxlength="4" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label id="lbl-card-name" for="card-name">اسم حامل البطاقة</label>
+            <input id="card-name" type="text" placeholder="كما هو مكتوب على البطاقة" />
+          </div>
+
+          <div id="card-error" class="error" style="display:none"></div>
+        </div>
+
+        <!-- Fawry -->
+        <div id="fawry-form" style="display:none">
+          <div id="fawry-helper" class="helper">ستتلقى تفاصيل الدفع عبر فوري (رمز أو فاتورة للدفع من ماكينات فوري أو عبر فروع محددة).</div>
+          <div class="field">
+            <label id="lbl-fawry-phone" for="fawry-phone">رقم الهاتف المسجل في فوري (اختياري)</label>
+            <input id="fawry-phone" type="tel" placeholder="010xxxxxxx" />
+          </div>
+        </div>
+
+        <!-- Mobile wallet -->
+        <div id="mobile-form" style="display:none">
+          <div id="mobile-helper" class="helper">اختر شركة المحمول وأدخل الرقم لاستلام رسالة الدفع.</div>
+          <div class="inline">
+            <div class="field">
+              <label id="lbl-operator" for="operator">الشركة</label>
+              <select id="operator">
+                <!-- options translated dynamically -->
+              </select>
+            </div>
+            <div class="field">
+              <label id="lbl-mobile-number" for="mobile-number">رقم الهاتف</label>
+              <input id="mobile-number" type="tel" placeholder="010xxxxxxxx" />
+            </div>
+          </div>
+
+          <!-- City (appears when governorate selected & mobile method chosen) -->
+          <div class="field" id="city-field" style="display:none; margin-top:12px;">
+            <label id="lbl-city" for="city">المدينة / المركز</label>
+            <select id="city">
+              <option value="">{{cityPlaceholder}}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- COD -->
+        <div id="cod-form" style="display:none">
+          <div id="cod-helper" class="helper">الدفع عند الاستلام — يرجى تحضير المبلغ نقداً عند التسليم.</div>
+        </div>
+
+      </div>
+
+      <div id="global-error" class="error" style="display:none"></div>
+      <div id="global-success" class="success" style="display:none"></div>
+
+      <button id="submit-btn" class="checkout-btn" style="background:#111">أكمل الدفع</button>
+
+    </section>
+
+    <!-- RIGHT: summary -->
+    <aside class="summary" aria-labelledby="summary-title">
+      <h3 id="summary-title">ملخص الطلب</h3>
+
+     <!-- داخل الـ summary -->
+<% cart.forEach(item => { %>
+  <div class="product" style="display:flex; gap:12px; margin-bottom:15px;">
+    <img src="<%= item.image %>" alt="صورة المنتج" width="90" style="border-radius:8px;" />
+
+    <div class="meta">
+      <div id="product-name" style="font-weight:700;"> <%= item.name %> </div>
+
+      <div id="product-desc" class="small" style="margin-top:6px;">
+        <%= item.description ? item.description : "لا يوجد وصف" %>
+      </div>
+
+      <div style="margin-top:6px;">
+        السعر: <span style="font-weight:bold;"> <%= item.priceAfterDiscount %> ج.م </span>
+      </div>
+
+      <div class="inline" style="margin-top:6px; gap:6px; align-items:center;">
+        <label class="small" style="margin:0;"> الكمية: </label>
+        <input type="number" min="1" value="<%= item.qty %>" style="width:60px; padding:4px; border-radius:6px; border:1px solid #ccc;" readonly />
+      </div>
+
+      <div style="margin-top:6px;">
+        الإجمالي: <span style="font-weight:bold;"> <%= item.priceAfterDiscount * item.qty %> ج.م </span>
+      </div>
+    </div>
+  </div>
+<% }); %>
+
+
+
+<div class="price" style="margin-top:25px; padding:15px; border-top:1px solid #ddd; display:flex; justify-content:space-between;">
+  <div id="lbl-total" style="font-weight:bold;">الإجمالي:</div>
+  <div id="total-amount" style="font-weight:bold;"> <%= total %> ج.م </div>
+</div>
+
+
+
+      <div id="lbl-shipping" class="small" style="margin-top:8px">الشحن: مجاني داخل مصر</div>
+
+      <button id="pay-now" class="checkout-btn" style="background:#0b7bff;margin-top:16px">ادفع الآن</button>
+
+      <div id="lbl-note" class="small" style="margin-top:10px">سيتم توجيهك لصفحة تأكيد الدفع أو ستتلقى تعليمات الدفع حسب الطريقة المختارة.</div>
+    </aside>
+  </div>
+
+  <script>
+
+
+
+
+
+
+    /***** Translations (professional english like global sites) *****/
+    const translations = {
+      en: {
+        dir: 'ltr',
+        payTitle: 'Payment',
+        payDesc: 'Choose a payment method and complete your purchase details.',
+        fullname: 'Full name',
+        fullnamePlaceholder: 'Enter your full name',
+        phone: 'Phone number',
+        phonePlaceholder: '010xxxxxxxx',
+        governorate: 'Governorate',
+        governoratePlaceholder: 'Select governorate',
+        address: 'Full address',
+        addressPlaceholder: 'Street - Building - Apt - Area',
+        payMethod: 'Payment method',
+        methods: ['Card (Visa / MasterCard)', 'Fawry', 'Mobile Wallet', 'Cash on Delivery'],
+        cardDetails: 'Card details',
+        cardHelper: 'We accept Visa and MasterCard',
+        cardNumber: 'Card number',
+        expiry: 'Expiry (MM/YY)',
+        cvv: 'CVV',
+        cardName: 'Name on card',
+        fawryHelper: 'You will receive Fawry payment instructions (code/invoice).',
+        fawryPhone: 'Fawry registered phone (optional)',
+        mobileHelper: 'Choose operator and provide number to receive the payment prompt.',
+        operatorPlaceholder: 'Select operator',
+        operators: ['Vodafone', 'Etisalat', 'Orange'],
+        cityPlaceholder: 'Select city / center',
+        codHelper: 'Cash on delivery — please have the exact amount ready.',
+        total: 'Total',
+        shipping: 'Shipping: Free within Egypt',
+        payNow: 'Pay now',
+        confirmBtn: 'Complete payment',
+        successCard: 'Payment processed successfully. Receipt will be sent to your number/email.',
+        successFawry: 'Fawry order created. You will receive payment instructions.',
+        successMobile: 'A payment prompt will be sent to your mobile wallet.',
+        successCod: 'Order confirmed. Payment will be collected on delivery.',
+        errors: {
+          fullname: 'Please enter full name.',
+          phone: 'Please enter a valid Egyptian mobile number (11 digits, starting with 01).',
+          governorate: 'Please select governorate.',
+          address: 'Please enter full address.',
+          invalidCard: 'Invalid card number.',
+          luhnFail: 'Card number failed validation.',
+          expiryFormat: 'Enter expiry as MM/YY.',
+          expiryInvalid: 'Card has expired.',
+          cvv: 'Enter a valid CVV (3 or 4 digits).',
+          operator: 'Please select operator.',
+          mobileNumber: 'Please enter a valid mobile number for wallet.'
+        },
+        governorates: {
+          "Cairo": ["Nasr City","Heliopolis","Maadi","New Cairo","Al-Matariya","Ain Shams"],
+          "Giza": ["Haram","6th of October","Badrashin","Imbaba","Kerdasa"],
+          "Alexandria": ["Sidi Gaber","Agami","Montaza","Borough"],
+          "Dakahlia": ["Mansoura","Talkha","Mit Ghamr","Belqas","Gamasa"],
+          "Sharqia": ["Zagazig","Belbeis","10th of Ramadan","Menyat El Qamh"]
+        },
+        productName: 'Demo Product Name',
+        productDesc: 'Short description or small specs here',
+      },
+      ar: {
+        dir: 'rtl',
+        payTitle: 'نموذج الدفع',
+        payDesc: 'اختر وسيلة الدفع وأكمل بيانات الشراء.',
+        fullname: 'الاسم الكامل',
+        fullnamePlaceholder: 'اسمك كما في البطاقة أو العنوان',
+        phone: 'رقم الموبايل',
+        phonePlaceholder: '010xxxxxxxx',
+        governorate: 'المحافظة',
+        governoratePlaceholder: 'اختر المحافظة',
+        address: 'العنوان التفصيلي',
+        addressPlaceholder: 'شارع - عمارة - رقم - حي',
+        payMethod: 'طريقة الدفع',
+        methods: ['بطاقة (Visa / MasterCard)', 'فوري (Fawry)', 'محفظة موبايل', 'الدفع عند الاستلام'],
+        cardDetails: 'تفاصيل البطاقة',
+        cardHelper: 'نقبل Visa و MasterCard',
+        cardNumber: 'رقم البطاقة',
+        expiry: 'تاريخ الانتهاء (MM/YY)',
+        cvv: 'CVV',
+        cardName: 'اسم حامل البطاقة',
+        fawryHelper: 'ستتلقى تفاصيل الدفع عبر فوري (رمز أو فاتورة للدفع من ماكينات فوري أو عبر فروع محددة).',
+        fawryPhone: 'رقم الهاتف المسجل في فوري (اختياري)',
+        mobileHelper: 'اختر شركة المحمول وأدخل الرقم لاستلام رسالة الدفع.',
+        operatorPlaceholder: 'اختر',
+        operators: ['فودافون','اتصالات','أورانج'],
+        cityPlaceholder: 'اختر المركز / المدينة',
+        codHelper: 'الدفع عند الاستلام — يرجى تحضير المبلغ نقداً عند التسليم.',
+        total: 'الإجمالي',
+        shipping: 'الشحن: مجاني داخل مصر',
+        payNow: 'ادفع الآن',
+        confirmBtn: 'أكمل الدفع',
+        successCard: 'تمت معالجة الدفع بنجاح. سيتم إرسال إيصال إلى رقمك/بريدك.',
+        successFawry: 'تم إنشاء طلب فوري. ستصلك تعليمات الدفع عبر رسالة قصيرة أو كود الدفع.',
+        successMobile: 'ستصلك رسالة دفع إلى محفظتك لإكمال المعاملة.',
+        successCod: 'تم تأكيد الطلب وسيتم تحصيل المبلغ عند التسليم.',
+        errors: {
+          fullname: 'من فضلك أدخل الاسم الكامل.',
+          phone: 'من فضلك أدخل رقم موبايل مصري صحيح (11 رقم يبدأ بـ 01).',
+          governorate: 'اختر المحافظة.',
+          address: 'أدخل العنوان التفصيلي.',
+          invalidCard: 'رقم البطاقة غير صحيح',
+          luhnFail: 'رقم البطاقة لم يجتاز التحقق (Luhn).',
+          expiryFormat: 'ادخل تاريخ الانتهاء بصيغة MM/YY.',
+          expiryInvalid: 'البطاقة منتهية الصلاحية',
+          cvv: 'ادخل CVV صحيح (3 أو 4 أرقام).',
+          operator: 'اختر شركة المحمول.',
+          mobileNumber: 'أدخل رقم محمول صحيح لمحفظة الموبايل.'
+        },
+        governorates: {
+          "القاهرة": ["مدينة نصر","مصر الجديدة","المعادي","التجمع الخامس","المطرية","عين شمس"],
+          "الجيزة": ["الهرم","6 أكتوبر","البدرشين","إمبابة","كرداسة"],
+          "الإسكندرية": ["سيدي جابر","العجمي","المنتزه","برج العرب"],
+          "الدقهلية": ["المنصورة","طلخا","ميت غمر","بلقاس","جمصة"],
+          "الشرقية": ["الزقازيق","بلبيس","العاشر من رمضان","منيا القمح"]
+        },
+        productName: 'اسم المنتج التجريبي',
+        productDesc: 'وصف قصير أو مواصفات صغيرة هنا'
+      }
+    };
+
+    // Keep consistent governorate keys between languages by using canonical keys:
+    // We'll use canonical keys map so we can populate selects correctly
+    const govKeys = ['cairo','giza','alexandria','dakahlia','sharqia'];
+    // mapping canonical key to display text in each language
+    const govDisplay = {
+      en: {
+        cairo: 'Cairo',
+        giza: 'Giza',
+        alexandria: 'Alexandria',
+        dakahlia: 'Dakahlia',
+        sharqia: 'Sharqia'
+      },
+      ar: {
+        cairo: 'القاهرة',
+        giza: 'الجيزة',
+        alexandria: 'الإسكندرية',
+        dakahlia: 'الدقهلية',
+        sharqia: 'الشرقية'
+      }
+    };
+
+    // city lists keyed by canonical governorate keys, for both languages
+    const cityLists = {
+      en: {
+        cairo: ['Nasr City','Heliopolis','Maadi','New Cairo','Al-Matariya','Ain Shams'],
+        giza: ['Haram','6th of October','Badrashin','Imbaba','Kerdasa'],
+        alexandria: ['Sidi Gaber','Agami','Montaza','Borough'],
+        dakahlia: ['Mansoura','Talkha','Mit Ghamr','Belqas','Gamasa'],
+        sharqia: ['Zagazig','Belbeis','10th of Ramadan','Menyat El Qamh']
+      },
+      ar: {
+        cairo: ['مدينة نصر','مصر الجديدة','المعادي','التجمع الخامس','المطرية','عين شمس'],
+        giza: ['الهرم','6 أكتوبر','البدرشين','إمبابة','كرداسة'],
+        alexandria: ['سيدي جابر','العجمي','المنتزه','برج العرب'],
+        dakahlia: ['المنصورة','طلخا','ميت غمر','بلقاس','جمصة'],
+        sharqia: ['الزقازيق','بلبيس','العاشر من رمضان','منيا القمح']
+      }
+    };
+
+    /***** Elements (cache) *****/
+    const langToggle = document.getElementById('langToggle');
+    const payTitle = document.getElementById('pay-title');
+    const payDesc = document.getElementById('pay-desc');
+    const lblFullname = document.getElementById('lbl-fullname');
+    const fullnameInput = document.getElementById('fullname');
+    const lblPhone = document.getElementById('lbl-phone');
+    const phoneInput = document.getElementById('phone');
+    const lblGovernorate = document.getElementById('lbl-governorate');
+    const governorateSelect = document.getElementById('governorate');
+    const lblAddress = document.getElementById('lbl-address');
+    const addressInput = document.getElementById('address');
+    const lblPaymethod = document.getElementById('lbl-paymethod');
+    const methodsContainer = document.getElementById('methods');
+    const paymentArea = document.getElementById('payment-area');
+    const cardDetailsTitle = document.getElementById('card-details-title');
+    const cardHelper = document.getElementById('card-helper');
+    const cardBrand = document.getElementById('card-brand');
+    const lblCardNumber = document.getElementById('lbl-card-number');
+    const cardNumberInput = document.getElementById('card-number');
+    const lblExpiry = document.getElementById('lbl-expiry');
+    const expiryInput = document.getElementById('expiry');
+    const lblCvv = document.getElementById('lbl-cvv');
+    const cvvInput = document.getElementById('cvv');
+    const lblCardName = document.getElementById('lbl-card-name');
+    const cardNameInput = document.getElementById('card-name');
+    const fawryHelper = document.getElementById('fawry-helper');
+    const lblFawryPhone = document.getElementById('lbl-fawry-phone');
+    const fawryPhoneInput = document.getElementById('fawry-phone');
+    const mobileHelper = document.getElementById('mobile-helper');
+    const operatorSelect = document.getElementById('operator');
+    const lblOperator = document.getElementById('lbl-operator');
+    const lblMobileNumber = document.getElementById('lbl-mobile-number');
+    const mobileNumberInput = document.getElementById('mobile-number');
+    const cityField = document.getElementById('city-field');
+    const lblCity = document.getElementById('lbl-city');
+    const citySelect = document.getElementById('city');
+    const codHelper = document.getElementById('cod-helper');
+    const submitBtn = document.getElementById('submit-btn');
+    const globalError = document.getElementById('global-error');
+    const globalSuccess = document.getElementById('global-success');
+    const methodsNodeList = () => Array.from(document.querySelectorAll('.method'));
+    const payNowBtn = document.getElementById('pay-now');
+
+    /***** State *****/
+    let currentLang = localStorage.getItem('lang') || 'en'; // default English
+    let currentMethod = 'card'; // default
+
+    /***** Utility functions (preserve original validations) *****/
+    function el(id){ return document.getElementById(id); }
+    function $$sel(sel){ return Array.from(document.querySelectorAll(sel)); }
+
+    // Luhn algorithm
+    function luhnCheck(cardNumber){
+      const digits = cardNumber.replace(/\D/g,'');
+      let sum = 0;
+      let shouldDouble = false;
+      for(let i = digits.length - 1; i >= 0; i--){
+        let d = parseInt(digits.charAt(i),10);
+        if(shouldDouble){
+          d = d * 2;
+          if(d > 9) d -= 9;
+        }
+        sum += d;
+        shouldDouble = !shouldDouble;
+      }
+      return (sum % 10) === 0;
+    }
+
+    function formatCardNumber(value){
+      return value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim().slice(0,19);
+    }
+    function formatExpiry(value){
+      const v = value.replace(/\D/g,'').slice(0,4);
+      if(v.length<=2) return v;
+      return v.slice(0,2) + '/' + v.slice(2);
+    }
+    function isValidEgyptPhone(p){
+      const v = p.replace(/\D/g,'');
+      return /^01[0-9]{9}$/.test(v);
+    }
+
+    /***** Rendering functions *****/
+    function buildGovernorateOptions(){
+      governorateSelect.innerHTML = '';
+      const placeholderOpt = document.createElement('option');
+      placeholderOpt.value = '';
+      placeholderOpt.textContent = translations[currentLang].governoratePlaceholder || '';
+      governorateSelect.appendChild(placeholderOpt);
+
+      govKeys.forEach(key=>{
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = govDisplay[currentLang][key];
+        governorateSelect.appendChild(opt);
+      });
+    }
+
+    function buildOperatorOptions(){
+      operatorSelect.innerHTML = '';
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.textContent = translations[currentLang].operatorPlaceholder || '';
+      operatorSelect.appendChild(placeholder);
+      translations[currentLang].operators.forEach(op=>{
+        const o = document.createElement('option');
+        o.value = op;
+        o.textContent = op;
+        operatorSelect.appendChild(o);
+      });
+    }
+
+    function buildMethods(){
+      methodsContainer.innerHTML = '';
+      const methodNames = translations[currentLang].methods;
+      // image placeholders same as original data URIs
+      const icons = [
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='40'><rect rx='6' width='64' height='40' fill='%23000000'/></svg>",
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='40'><rect rx='6' width='64' height='40' fill='%23e8e8e8'/></svg>",
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='40'><rect rx='6' width='64' height='40' fill='%23f3f3f3'/></svg>",
+        "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='40'><rect rx='6' width='64' height='40' fill='%23fafafa'/></svg>"
+      ];
+      const methodsData = ['card','fawry','mobile','cod'];
+      methodsData.forEach((id, idx) => {
+        const div = document.createElement('div');
+        div.className = 'method' + (idx === 0 ? ' selected' : '');
+        div.setAttribute('data-method', id);
+        div.setAttribute('role','tab');
+        div.setAttribute('tabindex','0');
+        div.setAttribute('aria-selected', idx===0 ? 'true' : 'false');
+
+        const img = document.createElement('img');
+        img.src = icons[idx];
+        img.alt = methodNames[idx];
+
+        const txt = document.createElement('div');
+        txt.textContent = methodNames[idx];
+
+        div.appendChild(img);
+        div.appendChild(txt);
+        methodsContainer.appendChild(div);
+      });
+
+      // bind events
+      bindMethodEvents();
+    }
+
+    function applyTextDirection(){
+      const t = translations[currentLang];
+      document.documentElement.lang = currentLang;
+      document.body.dir = t.dir;
+
+      // position floating toggle: English default -> show egypt flag to switch to ar
+      if(t.dir === 'rtl'){
+        // Arabic => place toggle on left, show English flag
+        langToggle.style.left = '18px';
+        langToggle.style.right = 'auto';
+        langToggle.textContent = '🇬🇧';
+      } else {
+        // English => place toggle on right, show Egyptian flag
+        langToggle.style.right = '18px';
+        langToggle.style.left = 'auto';
+        langToggle.textContent = '🇪🇬';
+      }
+    }
+
+    function renderAllTexts(){
+      const t = translations[currentLang];
+
+      // page-level
+      payTitle.textContent = t.payTitle;
+      payDesc.textContent = t.payDesc;
+
+      // labels & placeholders
+      lblFullname.textContent = t.fullname;
+      fullnameInput.placeholder = t.fullnamePlaceholder;
+      lblPhone.textContent = t.phone;
+      phoneInput.placeholder = t.phonePlaceholder;
+      lblGovernorate.textContent = t.governorate;
+      lblAddress.textContent = t.address;
+      addressInput.placeholder = t.addressPlaceholder;
+      lblPaymethod.textContent = t.payMethod;
+      submitBtn.textContent = t.confirmBtn || t.confirm;
+
+      // card area
+      cardDetailsTitle.textContent = t.cardDetails;
+      cardHelper.textContent = t.cardHelper;
+      cardBrand.textContent = t.methods ? t.methods[0] : (currentLang === 'ar' ? 'بطاقة' : 'Card');
+      lblCardNumber.textContent = t.cardNumber;
+      cardNumberInput.placeholder = (currentLang === 'ar' ? 'xxxx xxxx xxxx xxxx' : 'xxxx xxxx xxxx xxxx');
+      lblExpiry.textContent = t.expiry;
+      expiryInput.placeholder = 'MM/YY';
+      lblCvv.textContent = t.cvv;
+      cvvInput.placeholder = '123';
+      lblCardName.textContent = t.cardName;
+      cardNameInput.placeholder = (currentLang === 'ar' ? 'كما هو مكتوب على البطاقة' : 'As printed on card');
+
+      // fawry
+      fawryHelper.textContent = t.fawryHelper;
+      lblFawryPhone.textContent = t.fawryPhone;
+      fawryPhoneInput.placeholder = t.phonePlaceholder;
+
+      // mobile
+      mobileHelper.textContent = t.mobileHelper;
+      lblOperator.textContent = (currentLang === 'ar' ? 'الشركة' : 'Operator');
+      lblMobileNumber.textContent = t.phone;
+      mobileNumberInput.placeholder = t.phonePlaceholder;
+      lblCity.textContent = t.cityPlaceholder;
+
+      // cod
+      codHelper.textContent = t.codHelper;
+
+      // summary
+      document.getElementById('summary-title').textContent = (currentLang === 'ar' ? 'ملخص الطلب' : 'Order summary');
+      document.getElementById('product-name').textContent = t.productName;
+      document.getElementById('product-desc').textContent = t.productDesc;
+      document.getElementById('lbl-total').textContent = t.total;
+      document.getElementById('lbl-shipping').textContent = t.shipping;
+      payNowBtn.textContent = t.payNow;
+
+      // rebuild governorates and operators and methods
+      buildGovernorateOptions();
+      buildOperatorOptions();
+      buildMethods();
+
+      // re-apply current selections (if any)
+      // if governorate had value, reselect the canonical key if possible (we can't map text to key reliably), so keep clean
+      // hide city field until needed
+      cityField.style.display = 'none';
+    }
+
+    /***** Methods binding & selection behavior *****/
+    function bindMethodEvents(){
+      // after building method DOM, bind
+      const methodEls = methodsNodeList();
+      methodEls.forEach(m=>{
+        m.addEventListener('click', ()=> selectMethod(m.dataset.method));
+        m.addEventListener('keydown', (e)=> { if(e.key==='Enter' || e.key===' ') { e.preventDefault(); selectMethod(m.dataset.method); }});
+      });
+      // ensure default selection is card
+      selectMethod('card');
+    }
+
+    function selectMethod(name){
+      currentMethod = name;
+      const methodEls = methodsNodeList();
+      methodEls.forEach(m=>{
+        const is = (m.dataset.method === name);
+        m.classList.toggle('selected', is);
+        m.setAttribute('aria-selected', is ? 'true' : 'false');
+      });
+
+      // show/hide forms (preserve your original ids/structure)
+      el('card-form').style.display = name === 'card' ? 'block' : 'none';
+      el('fawry-form').style.display = name === 'fawry' ? 'block' : 'none';
+      el('mobile-form').style.display = name === 'mobile' ? 'block' : 'none';
+      el('cod-form').style.display = name === 'cod' ? 'block' : 'none';
+
+      // city field: show only if mobile chosen AND a governorate selected
+      const selectedGov = governorateSelect.value;
+      if(name === 'mobile' && selectedGov){
+        populateCitiesForGov(selectedGov);
+        cityField.style.display = (citySelect.options.length > 1) ? 'block' : 'none';
+      } else {
+        cityField.style.display = 'none';
+      }
+
+      clearMessages();
+    }
+
+    /***** Governorate => city handling *****/
+    function populateCitiesForGov(govKey){
+      // govKey is canonical key (cairo, giza, ...)
+      citySelect.innerHTML = '';
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.textContent = translations[currentLang].cityPlaceholder || '';
+      citySelect.appendChild(placeholder);
+
+      const list = cityLists[currentLang][govKey] || [];
+      list.forEach(c => {
+        const o = document.createElement('option');
+        o.value = c;
+        o.textContent = c;
+        citySelect.appendChild(o);
+      });
+    }
+
+    // when governorate changes
+    governorateSelect.addEventListener('change', ()=>{
+      const selected = governorateSelect.value;
+      if(currentMethod === 'mobile' && selected){
+        populateCitiesForGov(selected);
+        cityField.style.display = (citySelect.options.length > 1) ? 'block' : 'none';
+      } else {
+        cityField.style.display = 'none';
+      }
+    });
+
+    /***** Messaging helpers (use translations) *****/
+    function clearMessages(){
+      globalError.style.display = 'none';
+      globalSuccess.style.display = 'none';
+      const cardErr = el('card-number-error');
+      if(cardErr) cardErr.style.display = 'none';
+      const cardE = el('card-error');
+      if(cardE) cardE.style.display = 'none';
+    }
+    function showError(msgKeyOrText){
+      clearMessages();
+      const t = translations[currentLang];
+      const node = globalError;
+      // if known key, map to translation
+      let text = msgKeyOrText;
+      if(typeof msgKeyOrText === 'string' && t.errors && t.errors[msgKeyOrText]) text = t.errors[msgKeyOrText];
+      node.textContent = text;
+      node.style.display = 'block';
+      node.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+    function showSuccess(key){
+      const t = translations[currentLang];
+      const node = globalSuccess;
+      node.textContent = t[key] || key;
+      node.style.display = 'block';
+    }
+
+    submitBtn.addEventListener('click', onSubmit);
+    payNowBtn.addEventListener('click', ()=> { window.scrollTo({top:0,behavior:'smooth'}); selectMethod('card'); });
+
+    function onSubmit(e){
+      e.preventDefault();
+      clearMessages();
+
+      const fullname = fullnameInput.value.trim();
+      const phone = phoneInput.value.trim();
+      const address = addressInput.value.trim();
+      const governorate = governorateSelect.value;
+
+      if(!fullname) return showError('fullname');
+      if(!phone || !isValidEgyptPhone(phone)) return showError('phone');
+      if(!governorate) return showError('governorate');
+      if(!address) return showError('address');
+
+      if(currentMethod === 'card'){
+        const number = cardNumberInput.value.replace(/\s/g,'');
+        const expiry = expiryInput.value;
+        const cvv = cvvInput.value;
+        const nameOnCard = cardNameInput.value.trim();
+
+        if(!/^\d{13,19}$/.test(number)){
+          const node = el('card-number-error');
+          node.textContent = translations[currentLang].errors.invalidCard || 'Invalid card';
+          node.style.display = 'block';
+          return;
+        }
+        if(!luhnCheck(number)){
+          const node = el('card-number-error');
+          node.textContent = translations[currentLang].errors.luhnFail || 'Invalid card';
+          node.style.display = 'block';
+          return;
+        }
+        if(!/^\d{2}\/\d{2}$/.test(expiry)){
+          el('card-error').textContent = translations[currentLang].errors.expiryFormat || 'Expiry format';
+          el('card-error').style.display = 'block';
+          return;
+        } else {
+          const parts = expiry.split('/');
+          const mm = parseInt(parts[0],10);
+          const yy = parseInt(parts[1],10) + 2000;
+          const now = new Date();
+          if(mm < 1 || mm > 12) { el('card-error').textContent = translations[currentLang].errors.expiryFormat; el('card-error').style.display='block'; return; }
+          const expDate = new Date(yy, mm);
+          if(expDate <= now){ el('card-error').textContent = translations[currentLang].errors.expiryInvalid; el('card-error').style.display='block'; return; }
+        }
+
+        if(!/^\d{3,4}$/.test(cvv)){
+          el('card-error').textContent = translations[currentLang].errors.cvv;
+          el('card-error').style.display = 'block';
+          return;
+        }
+
+        sendPayment({
+          method: 'card',
+          fullname, phone, address, governorate,
+          card: { number: number.replace(/\d(?=\d{4})/g, "*"), nameOnCard: nameOnCard, expiry, cvv: '***' }
+        });
+
+      } else if(currentMethod === 'fawry'){
+        const fphone = fawryPhoneInput.value.trim();
+        if(fphone && !isValidEgyptPhone(fphone)) return showError('phone');
+        sendPayment({ method:'fawry', fullname, phone, governorate, address, fawryPhone: fphone });
+
+      } else if(currentMethod === 'mobile'){
+        const operator = operatorSelect.value;
+        const mnumber = mobileNumberInput.value.trim();
+        if(!operator) return showError('operator');
+        if(!isValidEgyptPhone(mnumber)) return showError('mobileNumber');
+
+        // optionally get city when visible
+        const city = (citySelect && citySelect.value) ? citySelect.value : null;
+
+        sendPayment({ method:'mobile', fullname, phone, governorate, address, operator, mobileNumber: mnumber, city });
+      } else if(currentMethod === 'cod'){
+        sendPayment({ method:'cod', fullname, phone, governorate, address });
+      }
+    }
+
+    // Simulated server call (preserve text behavior)
+    function sendPayment(payload){
+      submitBtn.disabled = true;
+      submitBtn.textContent = (currentLang === 'ar') ? 'جاري المعالجة...' : 'Processing...';
+      console.log('Sending payment payload (simulate):', payload);
+
+      setTimeout(()=>{
+        submitBtn.disabled = false;
+        submitBtn.textContent = translations[currentLang].confirmBtn || 'Complete payment';
+
+        if(payload.method === 'card'){
+          showSuccess('successCard');
+        } else if(payload.method === 'fawry'){
+          showSuccess('successFawry');
+        } else if(payload.method === 'mobile'){
+          showSuccess('successMobile');
+        } else {
+          showSuccess('successCod');
+        }
+
+      }, 1000);
+    }
+
+    /***** Language toggle behavior *****/
+    function setLanguage(lang){
+      currentLang = lang;
+      localStorage.setItem('lang', lang);
+      applyTextDirection();
+      renderAllTexts();
+      // after rendering, ensure card formatting listeners exist
+      bindInputFormatters();
+    }
+
+    langToggle.addEventListener('click', ()=>{
+      const next = (currentLang === 'en') ? 'ar' : 'en';
+      setLanguage(next);
+    });
+
+    /***** Input formatters binding (card & expiry) *****/
+    function bindInputFormatters(){
+      // unbind previous to avoid double-binding (simple approach: recreate handlers)
+      cardNumberInput.oninput = function(e){
+        const formatted = formatCardNumber(e.target.value);
+        e.target.value = formatted;
+        const err = el('card-number-error');
+        if(err) err.style.display = 'none';
+      };
+      expiryInput.oninput = function(e){
+        e.target.value = formatExpiry(e.target.value);
+      };
+    }
+
+    /***** Initialization *****/
+    // initial setup
+    applyTextDirection();
+    renderAllTexts();
+    bindInputFormatters();
+
+    // ensure methods have working listeners
+    // (buildMethods called inside renderAllTexts which calls bindMethodEvents)
+
+    // set default method to card
+    selectMethod('card');
+
+    // If governorate had a selection in english/ar? we don't persist selected gov across language switch (keys canonical).
+    // But we need to map: when user picks a governorate (canonical key saved as value), it stays same when language flips.
+    // governorateSelect options have values = keys (cairo, giza, ...), so selection persists.
+
+    // Done.
+
+
+
+
+    // داخل الـ <script>
+const productQty = document.getElementById('product-qty');
+const totalAmount = document.getElementById('total-amount');
+let productPrice = 1566; // السعر لكل وحدة من المنتج
+
+// تحديث الإجمالي تلقائيًا عند تغيير الكمية
+productQty.addEventListener('input', ()=>{
+  let qty = parseInt(productQty.value,10);
+  if(isNaN(qty) || qty<1) qty = 1;
+  const total = productPrice * qty;
+  totalAmount.textContent = total.toLocaleString('ar-EG') + ' ج.م';
+});
+
+// تحديث الـ payload عند إرسال الدفع ليشمل الكمية والإجمالي
+function onSubmit(e){
+  e.preventDefault();
+  clearMessages();
+
+  const fullname = fullnameInput.value.trim();
+  const phone = phoneInput.value.trim();
+  const address = addressInput.value.trim();
+  const governorate = governorateSelect.value;
+  const qty = parseInt(productQty.value,10) || 1;
+  const totalPrice = productPrice * qty;
+
+  if(!fullname) return showError('fullname');
+  if(!phone || !isValidEgyptPhone(phone)) return showError('phone');
+  if(!governorate) return showError('governorate');
+  if(!address) return showError('address');
+
+  let payload = { fullname, phone, address, governorate, qty, totalPrice, product: translations[currentLang].productName };
+
+  if(currentMethod === 'card'){
+    const number = cardNumberInput.value.replace(/\s/g,'');
+    const expiry = expiryInput.value;
+    const cvv = cvvInput.value;
+    const nameOnCard = cardNameInput.value.trim();
+
+    if(!/^\d{13,19}$/.test(number)){
+      const node = el('card-number-error');
+      node.textContent = translations[currentLang].errors.invalidCard || 'Invalid card';
+      node.style.display = 'block';
+      return;
+    }
+    if(!luhnCheck(number)){
+      const node = el('card-number-error');
+      node.textContent = translations[currentLang].errors.luhnFail || 'Invalid card';
+      node.style.display = 'block';
+      return;
+    }
+    if(!/^\d{2}\/\d{2}$/.test(expiry)){
+      el('card-error').textContent = translations[currentLang].errors.expiryFormat || 'Expiry format';
+      el('card-error').style.display = 'block';
+      return;
+    } else {
+      const parts = expiry.split('/');
+      const mm = parseInt(parts[0],10);
+      const yy = parseInt(parts[1],10) + 2000;
+      const now = new Date();
+      const expDate = new Date(yy, mm);
+      if(mm<1 || mm>12 || expDate<=now){ el('card-error').textContent=translations[currentLang].errors.expiryInvalid; el('card-error').style.display='block'; return; }
+    }
+    if(!/^\d{3,4}$/.test(cvv)){
+      el('card-error').textContent = translations[currentLang].errors.cvv;
+      el('card-error').style.display = 'block';
+      return;
+    }
+    payload.card = { number: number.replace(/\d(?=\d{4})/g, "*"), nameOnCard, expiry, cvv:'***' };
+  }
+  // fawry, mobile, cod handled as قبل
+  if(currentMethod === 'fawry'){
+    const fphone = fawryPhoneInput.value.trim();
+    if(fphone && !isValidEgyptPhone(fphone)) return showError('phone');
+    payload.fawryPhone = fphone;
+  } else if(currentMethod === 'mobile'){
+    const operator = operatorSelect.value;
+    const mnumber = mobileNumberInput.value.trim();
+    if(!operator) return showError('operator');
+    if(!isValidEgyptPhone(mnumber)) return showError('mobileNumber');
+    const city = (citySelect && citySelect.value) ? citySelect.value : null;
+    payload.operator = operator;
+    payload.mobileNumber = mnumber;
+    payload.city = city;
+  }
+  sendPayment(payload);
+}
+
+// زر ادفع الآن يحدد البطاقة تلقائيًا وينقل
+payNowBtn.addEventListener('click', ()=>{
+  window.scrollTo({top:0,behavior:'smooth'});
+  selectMethod('card');
+});
+
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Product</title>
+        <link rel="shortcut icon" href="/img/favicon.png" type="image/x-icon">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+body {
+    background: #f5f6fa;
+    font-family: "Segoe UI", sans-serif;
+}
+
+.container {
+    max-width: 800px;
+    margin-top: 50px;
+}
+
+.card {
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    padding: 30px;
+}
+
+.card img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+form .form-label {
+    font-weight: 600;
+}
+
+@media (max-width: 576px) {
+    .card {
+        padding: 20px;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h3 class="mb-4">Edit Product</h3>
+<form id="editProductForm" action="/edit/<%= arr._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+            
+            <!-- Product Image -->
+            <div class="mb-3 text-center">
+                    <label class="form-label">Product Images</label>
+      <input type="file" name="image" accept="image/*" multiple class="form-control">
+      <% if (arr.image && arr.image.length > 0) { %>
+        <div class="mt-2">
+          <img src="<%= arr.image[0].url %>" alt="product image" width="40" height="400" class="img-preview">
+        </div>
+      <% } else { %>
+        <p class="mt-2 text-muted">No Image yet</p>
+      <% } %>
+            </div>
+
+            <!-- Product Name -->
+            <div class="mb-3">
+                <label for="productName" class="form-label">Product Name</label>
+                <input type="text" name="name" id="productName" class="form-control" value="<%= arr.name %>" required>
+            </div>
+
+            <!-- Product Description -->
+            <div class="mb-3">
+                <label for="productDescription" class="form-label">Product Description</label>
+                <textarea id="productDescription" name="description" class="form-control" rows="3" required><%= arr.description %></textarea>
+            </div>
+
+            <!-- Price and Discount -->
+            <div class="row g-3 mb-3">
+                <div class="col-6">
+                    <label for="productPrice" class="form-label" >Price ($)</label>
+                    <input type="number" name="price" id="productPrice" class="form-control" value="<%= arr.price %>" required>
+                </div>
+                <div class="col-6">
+                    <label for="productDiscount" class="form-label">Discount (%)</label>
+                    <input type="number" name="discount" id="productDiscount" class="form-control" value="<%= arr.discount %>">
+                </div>
+            </div>
+
+            <!-- Category -->
+            <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <select id="category" name="category" class="form-select" required>
+              <option value="wax" <%= arr.category === "wax" ? "selected" : "" %>>Wax</option>
+        <option value="foam" <%= arr.category === "foam" ? "selected" : "" %>>Foam</option>
+                </select>
+            </div>
+
+            <!-- Save Button -->
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fa fa-save me-1"></i> Save Changes
+                </button>
+
+                <br/>
+
+      <button type="button" class="btn btn-danger btn-lg px-4" data-bs-toggle="modal" data-bs-target="#exampleModal">Delete Product</button>
+
+
+
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+  <div
+        class="modal fade"
+        id="exampleModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">
+                Delete Customer
+              </h1>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">Are you sure you want to continue delete the customer?</div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+                <form action="/delete/<%= arr._id %>?_method=DELETE" method="post">
+              <button type="submit" class="btn btn-danger">
+                Delete
+              </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
