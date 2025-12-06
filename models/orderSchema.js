@@ -52,4 +52,24 @@ orderSchema.pre("save", async function (next) {
   next();
 });
 
+
+orderSchema.pre("save", async function (next) {
+  if (!this.isNew) return next();
+
+  try {
+    const lastOrder = await mongoose
+      .model("Order")
+      .findOne()
+      .sort({ orderNumber: -1 });
+
+    this.orderNumber = lastOrder ? lastOrder.orderNumber + 1 : 1;
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
+
+
 module.exports = mongoose.model("Order", orderSchema);

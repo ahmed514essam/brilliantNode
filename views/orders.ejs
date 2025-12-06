@@ -225,12 +225,22 @@ direction: ltr;
                   <button class="btn btn-danger btn-sm">حذف</button>
                 </form>
               </td>
+
             </tr>
           <% }) %>
 
         </tbody>
       </table>
+
     </div>
+
+
+<form action="/reset-statistics" method="POST" onsubmit="return confirm('هل أنت متأكد من مسح كل الطلبات؟');">
+  <button type="submit" class="btn btn-danger">مسح الكل</button>
+</form>
+
+
+
   </div>
 
   <script>
@@ -248,6 +258,8 @@ direction: ltr;
       });
     });
   </script>
+ 
+
 
 </body>
 </html>

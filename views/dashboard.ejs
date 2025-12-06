@@ -311,34 +311,23 @@ body {
     <div class="mt-5">
         <h4>Best-Selling Products</h4>
         <div class="row g-4 mt-1">
+
+              <% sortedProducts.slice(0,5).forEach(p => { %>
+
             <div class="col-6 col-md-3 best-product">
                 <div class="card shadow-sm p-3">
-                    <img src="https://via.placeholder.com/150" alt="" class="rounded mb-2" />
-                    <h6 class="m-0">Leather Jacket</h6>
-                    <small class="text-muted">420 sales</small>
+                    <img src="<%= p.image %>" alt="" class="rounded mb-2" />
+                    <h6 class="m-0"><%= p.name %></h6>
+                    <small class="text-muted"><%= p.totalQty %> sales</small>
                 </div>
             </div>
-            <div class="col-6 col-md-3 best-product">
-                <div class="card shadow-sm p-3">
-                    <img src="https://via.placeholder.com/150" alt="" class="rounded mb-2" />
-                    <h6 class="m-0">Sport Shoes</h6>
-                    <small class="text-muted">380 sales</small>
-                </div>
-            </div>
-            <div class="col-6 col-md-3 best-product">
-                <div class="card shadow-sm p-3">
-                    <img src="https://via.placeholder.com/150" alt="" class="rounded mb-2" />
-                    <h6 class="m-0">Smart Watch</h6>
-                    <small class="text-muted">340 sales</small>
-                </div>
-            </div>
-            <div class="col-6 col-md-3 best-product">
-                <div class="card shadow-sm p-3">
-                    <img src="https://via.placeholder.com/150" alt="" class="rounded mb-2" />
-                    <h6 class="m-0">Wireless Headphones</h6>
-                    <small class="text-muted">300 sales</small>
-                </div>
-            </div>
+
+  <% }) %>
+
+
+
+      
+           
         </div>
     </div>
 
@@ -361,7 +350,7 @@ body {
 
                         <tr>
                             <td><%= index + 1 %></td>
-                            <td><%= region._id %></td>
+                            <td><%= region.region %></td>
                             <td><%= region.count %></td>
                 <td><%= region.percentage.toFixed(2) %>%</td>
                         </tr>

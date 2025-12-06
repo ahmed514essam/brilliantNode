@@ -18,6 +18,7 @@ const Customer = require("./models/customerSchema");
 const Order = require("./models/orderSchema");
 const Sell = require("./models/sellSchema");
 const Section = require("./models/sectionSchema");
+
 const About = require("./models/aboutSchema");
 const moment = require("moment");
 var methodOverride = require("method-override");
@@ -163,16 +164,21 @@ function signToken(admin) {
   });
 }
 
+
+
+
+
+
 async function ensureAdmin(req, res, next) {
   try {
     const token = req.cookies["admin_token"]; // هنخزن التوكين في كوكي باسم admin_token
-    if (!token) return res.redirect("/admin");
+    if (!token) return res.redirect("/admin.html");
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const admin = await Admin.findById(decoded.id);
     if (!admin) {
       res.clearCookie("admin_token");
-      return res.redirect("admin");
+      return res.redirect("admin.html");
     }
     // ضيف بيانات الادمن للـ req للوصول في الراوتات
     req.admin = admin;
@@ -180,7 +186,7 @@ async function ensureAdmin(req, res, next) {
   } catch (err) {
     // توكن انتهى أو غير صالح
     res.clearCookie("admin_token");
-    return res.redirect("admin");
+    return res.redirect("admin.html");
   }
 }
 
@@ -390,49 +396,36 @@ app.get("/dashboard.html", ensureAdmin, async (req, res) => {
 
     // جلب عدد العملاء لكل محافظة
     const customersByRegion = await Customer.aggregate([
-      {
-        $group: {
-          _id: "$governorate",
-          count: { $sum: 1 },
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          total: { $sum: "$count" }, // إجمالي العملاء
-          regions: { $push: { region: "$_id", count: "$count" } },
-        },
-      },
-      { $unwind: "$regions" },
-      {
-        $project: {
-          _id: 0,
-          region: "$regions.region",
-          count: "$regions.count",
-          percentage: {
-            $multiply: [{ $divide: ["$regions.count", "$total"] }, 100],
-          },
-        },
-      },
-      { $sort: { percentage: -1 } }, // ترتيب حسب النسبة
-    ]);
+  { $group: { _id: "$governorate", count: { $sum: 1 } } },
+  { $group: { _id: null, total: { $sum: "$count" }, regions: { $push: { region: "$_id", count: "$count" } } } },
+  { $unwind: "$regions" },
+  { $project: { _id: 0, region: "$regions.region", count: "$regions.count", percentage: { $multiply: [{ $divide: ["$regions.count","$total"]}, 100] } } },
+  { $sort: { percentage: -1 } }
+]);
+
 
     console.log(customersByRegion);
 
-    // عد المنتجات
-    const productStats = {}; // key = productId, value = { name, totalQty }
-    monthlyOrders.forEach((order) => {
-      order.products.forEach((p) => {
-        if (!productStats[p.productId]) {
-          productStats[p.productId] = { name: p.name, totalQty: 0 };
-        }
-        productStats[p.productId].totalQty += p.qty;
-      });
-    });
-    // ترتيب المنتجات حسب الكمية المباعة
-    const sortedProducts = Object.entries(productStats)
-      .map(([id, info]) => ({ id, name: info.name, totalQty: info.totalQty }))
-      .sort((a, b) => b.totalQty - a.totalQty);
+  
+    
+
+
+const productStats = {};
+monthlyOrders.forEach((order) => {
+  order.products.forEach((p) => {
+    if (!productStats[p.productId]) {
+      productStats[p.productId] = { name: p.name, totalQty: 0 };
+    }
+    productStats[p.productId].totalQty += p.qty;
+  });
+});
+const sortedProducts = Object.entries(productStats)
+  .map(([id, info]) => ({ id, name: info.name, totalQty: info.totalQty }))
+  .sort((a, b) => b.totalQty - a.totalQty);
+
+
+
+
 
     const count = await Visitor.countDocuments();
     const countToday = await Visitor.countDocuments({
@@ -595,20 +588,77 @@ app.post("/cart/delete", (req, res) => {
   res.json({ html: result.html, total: result.total.toFixed(2) });
 });
 
-app.post("/orders/:id/status", ensureAdmin, async (req, res) => {
+// app.post("/orders/:id/status", ensureAdmin, async (req, res) => {
+//   const { id } = req.params;
+//   const { status } = req.body;
+
+//   await Order.findByIdAndUpdate(id, { status });
+//   res.redirect("/dashboard.html"); // غيرها لمسار صفحة الطلبات لديك
+// });
+
+
+router.post("/orders/:id/status", async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
-  await Order.findByIdAndUpdate(id, { status });
-  res.redirect("/dashboard.html"); // غيرها لمسار صفحة الطلبات لديك
+  const order = await Order.findById(id).populate("customer");
+
+  if (!order) return res.status(404).send("Order not found");
+
+  order.status = status;
+  await order.save();
+
+  // ===========================
+  // إرسال رسالة بناءً على الحالة
+  // ===========================
+
+  let msg = "";
+
+  if (status === "انتظار") {
+    msg = "طلبك الآن في حالة انتظار وسيتم مراجعته قريبًا ✔️";
+  }
+
+  if (status === "تم الشحن") {
+    msg = "تم شحن طلبك وهو الآن في الطريق إليك 🚚💨";
+  }
+
+  if (status === "مكتمل") {
+    msg = "تم تسليم طلبك بنجاح، شكرًا لثقتك بنا ❤️";
+  }
+
+  if (order.customer?.phone) {
+    await sendMessage(order.customer.phone, msg);
+  }
+
+  res.send("Status Updated");
 });
+
+
+
+
+
+
+app.post("/reset-statistics", ensureAdmin, async (req, res) => {
+  try {
+    // حذف كل العملاء والطلبات
+    await Customer.deleteMany({});
+    await Order.deleteMany({});
+
+    // إعادة توجيه لصفحة الطلبات بعد المسح
+    res.redirect("/orders.html");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("حدث خطأ أثناء مسح كل الطلبات");
+  }
+});
+
 
 app.post("/admin.html", async (req, res) => {
   try {
     const { email, password } = req.body;
     const admin = await Admin.findOne({ email });
     if (!admin)
-      return res.status(401).render("admin", { error: "Email أو Password " });
+      return res.status(401).render("admin.html", { error: "Email أو Password " });
 
     const match = await bcrypt.compare(password, admin.passwordHash);
     if (!match)
@@ -626,7 +676,27 @@ app.post("/admin.html", async (req, res) => {
     res.redirect("/dashboard.html");
   } catch (e) {
     console.error(e);
-    res.status(500).render("admin", { error: "حصل خطأ حاول تاني" });
+    res.status(500).render("admin.html", { error: "حصل خطأ حاول تاني" });
+  }
+});
+
+
+app.post("/orders/:id/send-message", ensureAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { message } = req.body;
+
+  try {
+    const order = await Order.findById(id).populate("customer");
+    if (!order) return res.status(404).json({ ok: false, error: "Order not found" });
+
+    const phone = order.customer.phone; // رقم العميل
+    // هنا تستدعي الدالة sendMessage
+    await sendMessage(phone, message);
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ ok: false, error: "Server error" });
   }
 });
 
@@ -703,7 +773,7 @@ app.post(
 
 app.post("/logout", (req, res) => {
   res.clearCookie("admin_token");
-  res.redirect("admin");
+  res.redirect("admin.html");
 });
 
 //----------Settings(POST)---------

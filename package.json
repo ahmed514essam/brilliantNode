@@ -32,6 +32,7 @@
     "multer-storage-cloudinary": "^4.0.0",
     "sass": "^1.93.3",
     "streamifier": "^0.1.1",
+    "twilio": "^5.10.7",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
