@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>الطلبات</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    body {
+      background: #f3f4f6;
+      font-family: "Tajawal", sans-serif;
+    }
+
+    /* --- Sidebar --- */
+    .sidebar {
+      width: 260px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      background: #111827;
+      color: #fff;
+      padding: 25px 0;
+    }
+    .sidebar h2 {
+      font-size: 22px;
+      margin-bottom: 35px;
+      text-align: center;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+    .sidebar a {
+      padding: 14px 25px;
+      display: block;
+      color: #cbd5e1;
+      transition: 0.2s;
+      font-size: 15px;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: #1f2937;
+      color: #fff;
+    }
+
+    /* Mobile */
+    @media (max-width: 992px) {
+      .sidebar {
+        left: -260px;
+        transition: .3s;
+      }
+      .sidebar.active {
+        left: 0;
+      }
+    }
+
+    /* --- Main Content --- */
+    .main {
+      margin-left: 260px;
+      padding: 30px;
+    }
+    @media(max-width:992px){
+      .main { margin-left:0; }
+    }
+
+    /* --- Page Header --- */
+    .page-header {
+      background: #fff;
+      padding: 20px 25px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* --- Table Styling --- */
+    table {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+    }
+    thead {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    td, th {
+      padding: 14px 12px !important;
+    }
+
+    .img-thumb {
+      width: 55px;
+      height: 55px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid #e5e7eb;
+    }
+
+    .product-item {
+      padding: 6px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    /* Status Select */
+    .status-select {
+      border-radius: 6px;
+    }
+
+    /* Delete Button */
+    .btn-danger {
+      padding: 4px 10px;
+      font-size: 14px;
+    }
+    /* Sidebar Links */
+.sidebar a {
+  padding: 14px 25px;
+  display: block;
+  color: #cbd5e1;
+  transition: 0.2s;
+  font-size: 15px;
+  text-decoration: none !important;   /* إزالة الخط */
+font-weight: 600;
+direction: ltr;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+  background: #1f2937;
+  color: #fff;
+  text-decoration: none !important;   /* تأكيد عدم وجود خط */
+}
+
+  </style>
+</head>
+
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Admin Panel</h2>
+    <a href="./dashboard.html"><i class="fa fa-home me-2"></i> Dashboard</a>
+    <a href="./show.html" class=""><i class="fa fa-box me-2"></i> Products</a>
+            <a href="./orders.html" class=" "><i class="fa fa-table pe-1"></i> Orders List</a>
+
+    <a href="./user/aboutSettings.html"><i class="fa fa-users me-2"></i> Settings For About</a>
+    <a href="./user/sell.html"><i class="fa fa-shopping-cart me-2"></i> Change Sell Show</a>
+    <a href="./user/settings.html"><i class="fa fa-chart-line me-2"></i> Home Settings</a>
+    <a href="./adminaccount.html"><i class="fa fa-gear me-2"></i> Admin Account</a>
+ <form method="post" accept="/admin/logout.html">
+<a href="/admin/logout.html" ><i class="fa fa-power-off me-2"></i> Logout</a>
+</form>  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="page-header">
+      <h3 class="m-0">قائمة الطلبات</h3>
+      <a href="/dashboard.html" class="btn btn-outline-secondary">العودة للداشبورد</a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table align-middle table-hover">
+        <thead>
+          <tr>
+            <th>رقم العملية</th>
+            <th>المشتري</th>
+            <th>المنتجات</th>
+            <th>السعر الكلي</th>
+            <th>الحالة</th>
+            <th>التاريخ</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (!orders || orders.length === 0) { %>
+            <tr><td colspan="7" class="text-center py-4">لا توجد طلبات حتى الآن</td></tr>
+          <% } %>
+
+          <% orders.forEach((order , index) => { %>
+            <tr>
+<td><strong><%= orders.length - index %></strong></td>
+
+              <td>
+                <div><strong><%= order.customer?.fullname || "غير معروف" %></strong></div>
+                <div class="text-muted small"><%= order.customer?.phone || "" %></div>
+              </td>
+
+              <td style="min-width: 280px;">
+                <% order.products.forEach(p => { %>
+                <div class="product-item d-flex align-items-center">
+                  <% const imgUrl = (p.image?.length) ? p.image[0].url : (p.productId?.image?.[0]?.url ?? null); %>
+                  <% if (imgUrl) { %>
+                  <img src="<%= imgUrl %>" class="img-thumb me-2">
+                  <% } %>
+
+                  <div>
+                    <strong><%= p.name %></strong>
+                    <div class="text-muted small">
+                      كمية: <%= p.qty %> — سعر: <%= p.priceAfterDiscount %> LE — نوع: <%= p.productId?.category || "غير محدد" %>
+                    </div>
+                  </div>
+                </div>
+                <% }) %>
+              </td>
+
+              <td><strong><%= order.totalPrice.toFixed(2) %> LE</strong></td>
+
+              <td>
+                <form class="status-form" data-id="<%= order._id %>">
+                  <select name="status" class="form-select form-select-sm status-select">
+                    <option value="انتظار" <%= order.status === "انتظار" ? "selected" : "" %>>انتظار</option>
+                    <option value="تم الشحن" <%= order.status === "تم الشحن" ? "selected" : "" %>>تم الشحن</option>
+                    <option value="مكتمل" <%= order.status === "مكتمل" ? "selected" : "" %>>مكتمل</option>
+                  </select>
+                </form>
+              </td>
+
+              <td><%= moment(order.createdAt).format("YYYY-MM-DD HH:mm") %></td>
+
+              <td>
+                <form action="/orders/delete/<%= order._id %>" method="post" onsubmit="return confirm('هل أنت متأكد؟');">
+                  <button class="btn btn-danger btn-sm">حذف</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.status-select').forEach(select => {
+      select.addEventListener('change', async function(){
+        const form = this.closest('.status-form');
+        const id = form.dataset.id;
+        const status = this.value;
+
+        await fetch(`/orders/${id}/status`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status })
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

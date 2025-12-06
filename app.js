@@ -290,6 +290,51 @@ app.get("/adminaccount.html", ensureAdmin, (req, res) => {
   });
 });
 
+
+
+app.get("/orders.html", ensureAdmin, async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate("customer")
+      .populate("products.productId")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.render("orders", {
+      orders,
+      currentPage: "orders",
+      admin: req.admin,
+      moment,
+    });
+  } catch (err) {
+    console.error("Error loading orders:", err);
+    res.status(500).send("حدث خطأ أثناء جلب الطلبات");
+  }
+});
+app.post("/orders/:id/status", ensureAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    await Order.findByIdAndUpdate(id, { status });
+
+    // لو الطلب جاية من fetch/ajax
+    if (req.xhr || req.headers.accept.indexOf("json") > -1) {
+      return res.json({ ok: true });
+    }
+
+    // وإلا رجع لصفحة الطلبات
+    res.redirect("/orders.html");
+  } catch (err) {
+    console.error("Error updating order status:", err);
+    res.status(500).send("حدث خطأ أثناء تحديث الحالة");
+  }
+});
+
+
+
+
+
 //-------dashboard---------
 app.get("/dashboard.html", ensureAdmin, async (req, res) => {
   try {

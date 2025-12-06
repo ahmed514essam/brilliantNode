@@ -6,7 +6,12 @@ const imageSchema = new mongoose.Schema({
 });
 
 const orderSchema =new mongoose.Schema({
-  customer: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" },
+orderNumber: { type: Number, unique: true },
+
+
+customer: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" },
+
+
 
   products: [
     {
@@ -17,15 +22,34 @@ const orderSchema =new mongoose.Schema({
       image: [imageSchema] // <=== هنا بنحفظ كل صور المنتج اللي اتشترا
     }
   ],
-  status: {
-  type: String,
-  enum: ["pending", "shipped", "completed", "canceled"],
-  default: "pending"
-},
-
-
   totalPrice: Number,
-  createdAt: { type: Date, default: Date.now }
+
+  status: {
+    type: String,
+    enum: ["انتظار", "تم الشحن", "مكتمل"],
+    default: "انتظار",
+  },
+
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  }
+});
+
+
+
+
+orderSchema.pre("save", async function (next) {
+  if (!this.isNew) return next();
+
+  const lastOrder = await mongoose
+    .model("Order")
+    .findOne()
+    .sort({ orderNumber: -1 });
+
+  this.orderNumber = lastOrder ? lastOrder.orderNumber + 1 : 1;
+
+  next();
 });
 
 module.exports = mongoose.model("Order", orderSchema);
