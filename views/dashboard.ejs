@@ -82,28 +82,28 @@ body { background: #f5f6fa; font-family: "Segoe UI", sans-serif; transition: .3s
             <div class="card p-3 shadow-sm d-flex align-items-center">
                 <i class="fa fa-users fa-2x mb-2"></i>
                 <h6>Total Customers</h6>
-                <h3><%= customersCount %> <small class="text-success">↑5%</small></h3>
+                <h3><%= customersCount %> <small class="text-success"></small></h3>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card p-3 shadow-sm d-flex align-items-center">
                 <i class="fa fa-box fa-2x mb-2"></i>
                 <h6>Total Products</h6>
-                <h3><%= totalProducts %> <small class="text-danger">↓2%</small></h3>
+                <h3><%= totalProducts %> <small class="text-danger"></small></h3>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card p-3 shadow-sm d-flex align-items-center">
                 <i class="fa fa-cart-shopping fa-2x mb-2"></i>
                 <h6>Total Orders this Month</h6>
-                <h3><%= soldThisMonth %> <small class="text-success">↑10%</small></h3>
+                <h3><%= soldThisMonth %> <small class="text-success"></small></h3>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="card p-3 shadow-sm d-flex align-items-center">
                 <i class="fa fa-dollar-sign fa-2x mb-2"></i>
                 <h6>Earnings</h6>
-                <h3>$<%= Math.round(totalRevenue * 100) / 100 %> <small class="text-success">↑8%</small></h3>
+                <h3>$<%= Math.round(totalRevenue * 100) / 100 %> <small class="text-success"></small></h3>
             </div>
         </div>
     </div>

@@ -4,20 +4,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>All Products </title>
-          <link rel="shortcut icon" href="/img/favicon.png" type="image/x-icon">
+  <title>All Products</title>
+  <link rel="shortcut icon" href="/img/favicon.png" type="image/x-icon">
 
+  <!-- Bootstrap & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
     body {
-      background: #f5f6fa;
+      background: #f4f6f9;
       font-family: "Segoe UI", sans-serif;
-      transition: .3s;
     }
 
-    /* Sidebar */
+    /* ================= Sidebar ================= */
     .sidebar {
       width: 260px;
       position: fixed;
@@ -27,8 +27,8 @@
       background: #1e1f26;
       color: #fff;
       padding-top: 20px;
-      transition: all .3s ease;
       z-index: 2000;
+      transition: .3s;
     }
 
     .sidebar h2 {
@@ -38,23 +38,23 @@
     }
 
     .sidebar a {
-      color: #ddd;
+      color: #ccc;
       display: block;
       padding: 12px 25px;
       text-decoration: none;
-      font-size: 16px;
+      font-size: 15px;
+      transition: .2s;
     }
 
     .sidebar a:hover,
     .sidebar a.active {
-      background: #272935;
+      background: #2a2c38;
       color: #fff;
     }
 
-    /* Sidebar toggle button for mobile */
     .menu-btn {
       display: none;
-      font-size: 25px;
+      font-size: 24px;
       cursor: pointer;
       margin-right: 15px;
     }
@@ -73,11 +73,10 @@
       }
     }
 
-    /* Content */
+    /* ================= Content ================= */
     .content {
       margin-left: 260px;
       padding: 25px;
-      transition: .3s;
     }
 
     @media (max-width: 992px) {
@@ -86,16 +85,16 @@
       }
     }
 
-    /* Topbar */
+    /* ================= Topbar ================= */
     .topbar {
       background: #fff;
       padding: 15px 25px;
       margin-bottom: 25px;
-      border-radius: 12px;
+      border-radius: 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
     }
 
     @media (max-width: 576px) {
@@ -109,25 +108,51 @@
       }
     }
 
-    /* Product Cards */
+    /* ================= Product Card ================= */
     .product-card {
-      border-radius: 15px;
-      transition: transform .2s;
+      height: 100%;
+      border-radius: 16px;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      transition: .3s;
     }
 
     .product-card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-6px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, .1);
     }
 
     .product-card img {
       width: 100%;
-      height: auto;
+      height: 180px;
+      object-fit: cover;
       border-radius: 12px;
     }
 
-    .product-actions button {
-      margin-right: 5px;
+    .product-info {
+      flex-grow: 1;
     }
+
+    .price-old {
+      text-decoration: line-through;
+      color: #999;
+      font-size: 14px;
+    }
+
+    .price-new {
+      color: #198754;
+      font-weight: bold;
+    }
+
+ .card-actions {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
   </style>
 </head>
 
@@ -137,118 +162,82 @@
   <div class="sidebar" id="sidebar">
     <h2>Admin Panel</h2>
     <a href="./dashboard.html"><i class="fa fa-home me-2"></i> Dashboard</a>
-    <a href="./show.html" class=""><i class="fa fa-box me-2"></i> Products</a>
-            <a href="./orders.html" class=" "><i class="fa fa-table pe-1"></i> Orders List</a>
-
-    <a href="./user/aboutSettings.html"><i class="fa fa-users me-2"></i> Settings For About</a>
-    <a href="./user/sell.html"><i class="fa fa-shopping-cart me-2"></i> Change Sell Show</a>
+    <a href="./show.html" class="active"><i class="fa fa-box me-2"></i> Products</a>
+    <a href="./orders.html"><i class="fa fa-table me-2"></i> Orders</a>
+    <a href="./user/aboutSettings.html"><i class="fa fa-users me-2"></i> About Settings</a>
+    <a href="./user/sell.html"><i class="fa fa-shopping-cart me-2"></i> Sell Section</a>
     <a href="./user/settings.html"><i class="fa fa-chart-line me-2"></i> Home Settings</a>
     <a href="./adminaccount.html"><i class="fa fa-gear me-2"></i> Admin Account</a>
-    <form method="post" accept="/admin/logout.html">
-<a href="/admin/logout.html" ><i class="fa fa-power-off me-2"></i> Logout</a>
-</form>
-
+    <a href="/admin/logout.html"><i class="fa fa-power-off me-2"></i> Logout</a>
   </div>
 
-  <!-- Main Content -->
+  <!-- Content -->
   <div class="content">
 
     <!-- Topbar -->
     <div class="topbar">
       <div class="d-flex align-items-center">
         <i class="fa fa-bars menu-btn" onclick="toggleSidebar()"></i>
-        <h3 class="m-0">Products Management</h3>
+        <h4 class="m-0">Products Management</h4>
       </div>
-      <div class="d-flex align-items-center">
-        <input type="search" class="form-control me-3" placeholder="Search products..." />
-        <i class="fa fa-bell fs-5 me-3"></i>
-        <i class="fa fa-user-circle fs-4"></i>
-      </div>
+      <input type="search" class="form-control w-25" placeholder="Search products..." />
     </div>
 
-    <!-- Add Product Button -->
+    <!-- Add Product -->
     <div class="mb-4 text-end">
-      <a href="./user/add.html" class="btn btn-success" >
+      <a href="./user/add.html" class="btn btn-success">
         <i class="fa fa-plus me-1"></i> Add Product
       </a>
     </div>
 
-    <!-- Products Grid -->
+    <!-- Products -->
     <div class="row g-4">
+      <% products.forEach(item => { %>
+        <div class="col-6 col-md-4 col-lg-3">
+          <div class="card product-card p-3">
+
+            <% if(item.image && item.image.length > 0){ %>
+              <img src="<%= item.image[0].url %>" alt="product">
+            <% } else { %>
+              <div class="text-center text-muted">No Image</div>
+            <% } %>
+
+            <div class="product-info mt-2">
+              <h6 class="mb-1"><%= item.name %></h6>
+              <p class="text-muted small mb-1"><%= item.category %></p>
+              <span class="price-old"><%= item.price %> LE</span><br>
+              <span class="price-new"><%= item.priceAfterDiscount %> LE</span>
+            </div>
+
+            <div class="card-actions">
+              <a href="./edit/<%= item._id %>" class="btn btn-warning btn-sm">
+                <i class="fa fa-edit"></i>
+              </a>
 
 
+          
 
-          <% products.forEach((item, index) => { %>
 
-
-  <div class="col-6 col-md-4 col-lg-3">
-        <div class="card product-card shadow-sm p-3">
-  <% if(item.image && item.image.length > 0){ %>
-                  <img src="<%= item.image[0].url %>" alt="product image" width="80" height="80" class="rounded">
-                <% } else { %>
-                  <p>No Image</p>
-                <% } %>          <h5 class="mb-1"><%= item.name %></h5>
-          <p class="text-muted small mb-2"><%= item.category %></p>
-          <p class="text-muted mb-1">Original Price: <del> <%= item.price %></del></p>
-          <p class="text-success mb-1">Discount: <%= item.discount %></p>
-          <p class="mb-2">Price After Discount: <%= item.priceAfterDiscount %></p>
-          <p class="text-muted small mb-2"><%= item.description %></p>
-          <div class="d-flex justify-content-between">
-                          <a href="./edit/<%= item._id %>" class="btn btn-warning btn-sm mb-1"><i class="fa fa-edit"></i></a>
-
-            <form action="/delete/<%= item._id %>?_method=DELETE" method="post" class="d-inline">
-                  <button class="btn btn-danger btn-sm mb-1">            <i class="fa fa-trash"></i> 
-</button>
-                </form>
+              <form action="/delete/<%= item._id %>?_method=DELETE" method="post">
+                <button class="btn btn-danger btn-sm">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </form>
+            </div>
 
           </div>
         </div>
-      </div>
+      <% }) %>
+    </div>
 
+  </div>
 
-                            <% }) %>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("active");
+    }
+  </script>
 
-
-      <!-- Product Example -->
-    
-
-      <!-- يمكنك تكرار الكارد لمنتجات إضافية -->
-    
-
-
-      <!-- Add Product Modal -->
-      
-
-      <!-- Edit Product Modal -->
-      
-
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-      <script>
-        function toggleSidebar() {
-          document.getElementById('sidebar').classList.toggle('active');
-        }
-
-        function confirmDelete(name) {
-          if (confirm(`Are you sure you want to delete "${name}"?`)) {
-            alert(`${name} has been deleted!`);
-            // هنا تضع الكود الفعلي لحذف المنتج
-          }
-        }
-
-        // مثال لإضافة المنتج من الفورم (يمكنك تعديل حسب Backend)
-        document.getElementById('addProductForm').addEventListener('submit', function(e) {
-          e.preventDefault();
-          alert("Product added!");
-          // هنا تضيف الكود الفعلي لإرسال البيانات
-        });
-
-        // مثال لتعديل المنتج
-        document.getElementById('editProductForm').addEventListener('submit', function(e) {
-          e.preventDefault();
-          alert("Product updated!");
-          // هنا تضيف الكود الفعلي للتحديث
-        });
-      </script>
 </body>
-
 </html>
