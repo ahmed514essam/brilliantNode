@@ -198,6 +198,13 @@
                                     <span class="new__price "><%= item.priceAfterDiscount %> LE</span>
                                     <span class="new__discount"><%=  item.price %> LE</span>
                                 </div>
+<br/>
+<button 
+  class="button view-product-btn"
+  data-id="<%= item._id %>">
+  Details
+</button>
+
 
                                 <button class="add-to-cart-btn button new__button" 
                                  data-id="<%= item._id %>"
@@ -262,6 +269,13 @@
                                     <span class="new__discount"><%=  item.price %> LE</span>
                                 </div>
 
+<br/>
+<button 
+  class="button view-product-btn"
+  data-id="<%= item._id %>">
+  Details
+</button>
+
                                 <button class="add-to-cart-btn button new__button"
                                     data-id="<%= item._id %>"
  data-name="<%= item.name %>"
@@ -271,6 +285,8 @@
  >
                                     <i class='bx bx-cart-alt new__icon'></i>
                                 </button>
+
+                                
                             </div>
                             <% });  %>
 
@@ -383,6 +399,80 @@
                 <i class='bx bx-up-arrow-alt scrollup__icon'></i>
             </a>
         
+
+
+
+
+
+
+<!-- ================= PRODUCT MODAL ================= -->
+<div class="product-modal" id="productModal">
+  <div class="product-modal__overlay"></div>
+
+  <div class="product-modal__content">
+    <i class='bx bx-x product-modal__close' id="closeProductModal"></i>
+
+    <img id="modalImage" src="" class="product-modal__img">
+
+    <h2 id="modalName"></h2>
+    <p id="modalDescription"></p>
+
+    <div class="modal__price">
+      <span id="modalPrice"></span> LE
+    </div>
+
+    <button class="button add-to-cart-btn" id="modalAddToCart">
+      Add To Cart
+      <i class='bx bx-cart-alt'></i>
+    </button>
+  </div>
+</div>
+
+<style>
+    .product-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 9999;
+}
+
+.product-modal.active {
+  display: block;
+}
+
+.product-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+}
+
+.product-modal__content {
+  position: relative;
+  background: #fff;
+  width: 90%;
+  max-width: 500px;
+  margin: 5% auto;
+  padding: 25px;
+  border-radius: 15px;
+  text-align: center;
+}
+
+.product-modal__img {
+  width: 200px;
+  margin-bottom: 15px;
+}
+
+.product-modal__close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+</style>
+
+
         <!--=============== SCROLL REVEAL ===============-->
         <script src="./js/scrollreveal.min.js"></script>
 

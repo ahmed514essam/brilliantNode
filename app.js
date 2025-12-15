@@ -338,6 +338,21 @@ app.post("/orders/:id/status", ensureAdmin, async (req, res) => {
 });
 
 
+// صفحة تفاصيل المنتج لكل زائر (مش شرط أدمن)
+app.get("/product/:id", async (req, res) => {
+  try {
+
+      // const products = await Product.find().sort({ createdAt: -1 }).lean();
+
+    const product = await Product.findById(req.params.id).lean();
+    if (!product) return res.status(404).send("Product not found");
+
+    res.render("product-details", { product, currentPage: "product" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
 
 
 
