@@ -167,6 +167,7 @@ direction: ltr;
           <tr>
             <th>رقم العملية</th>
             <th>المشتري</th>
+            <th>تفاصيل</th>
             <th>المنتجات</th>
             <th>السعر الكلي</th>
             <th>الحالة</th>
@@ -183,10 +184,30 @@ direction: ltr;
             <tr>
 <td><strong><%= orders.length - index %></strong></td>
 
-              <td>
-                <div><strong><%= order.customer?.fullname || "غير معروف" %></strong></div>
-                <div class="text-muted small"><%= order.customer?.phone || "" %></div>
-              </td>
+             <td>
+  <div><strong><%= order.customer?.fullname || "غير معروف" %></strong></div>
+
+  <div class="text-muted small">
+    📞 <%= order.customer?.phone || "—" %>
+  </div>
+
+  <div class="text-muted small">
+    🏙️ <%= order.customer?.governorate || "—" %>
+  </div>
+
+  <div class="text-muted small">
+    📍 <%= order.customer?.address || "—" %>
+  </div>
+</td>
+
+
+
+
+<td>  <a href="/customers/<%= order.customer?._id %>"
+   class="btn btn-sm btn-outline-primary">
+   تفاصيل العميل
+</a></td>
+
 
               <td style="min-width: 280px;">
                 <% order.products.forEach(p => { %>

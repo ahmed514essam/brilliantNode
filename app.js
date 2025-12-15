@@ -500,6 +500,31 @@ app.get("/user/add.html", ensureAdmin, (req, res) => {
   res.render("user/add", { currentPage: "add", admin: req.admin });
 });
 
+
+app.get("/customers/:id", ensureAdmin, async (req, res) => {
+  try {
+    const customer = await Customer.findById(req.params.id).lean();
+    if (!customer) {
+      return res.status(404).send("Customer not found");
+    }
+
+    const orders = await Order.find({ customer: customer._id })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.render("customer-details", {
+      customer,
+      orders
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
+
+
+
 // ---------- صفحة عرض المنتجات ----------
 app.get("/show.html", ensureAdmin, async (req, res) => {
   const products = await Product.find().sort({ createdAt: -1 }).lean();
@@ -1026,13 +1051,23 @@ app.delete("/delete/:id", async (req, res) => {
 //------------------------form COD------------------------
 app.post("/form.html", uploadCustomers.single("image"), async (req, res) => {
   const { fullname, phone, governorate, address } = req.body;
-  const customer = new Customer({
+  let customer = await Customer.findOne({ phone });
+
+if (!customer) {
+  customer = await Customer.create({
     fullname,
     phone,
     governorate,
-    address,
+    address
   });
+} else {
+  // تحديث بياناته لو غير عنوانه
+  customer.fullname = fullname;
+  customer.governorate = governorate;
+  customer.address = address;
   await customer.save();
+}
+
   const cart = req.session.cart || [];
   const products = cart.map((item) => ({
     productId: item.id, // لازم يكون ID المنتج
@@ -1073,3 +1108,7 @@ app.post("/orders/delete/:id", async (req, res) => {
     res.status(500).send("حدث خطأ أثناء الحذف");
   }
 });
+
+
+
+
